@@ -1,9 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 @import "primereact/resources/themes/lara-light-blue/theme.css";
 @import "primereact/resources/primereact.css";
 @import "primeflex/primeflex.css";
 @import 'primeicons/primeicons.css';
 
 body {
+    font-family: Roboto;
     margin: 0;
     padding: 0;
 }

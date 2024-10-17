@@ -32,7 +32,6 @@ function Navbar() {
 
     } catch (error) {
       console.log(error.response.data.message);
-      navigate('/login')
     }
   }
 
@@ -45,13 +44,7 @@ function Navbar() {
   const endContent = (
     <React.Fragment>
       <Button
-        label="Inicio"
-        icon="pi pi-home"
-        className="mr-2 bg-blue-700 text-white border-none"
-        onClick={() => navegar("")}
-      />
-      <Button
-        label="Clientes"
+        label="Usuarios"
         icon="pi pi-user"
         className="mr-2 bg-blue-700 text-white border-none"
         onClick={() => navegar("clientes")}

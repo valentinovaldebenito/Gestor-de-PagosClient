@@ -29,7 +29,7 @@ function Login() {
         //Recibimos el JWT y lo guardamos en el localStorage
         token = response.data.token;
         localStorage.setItem("token", token);
-        navigate("/");
+        navigate("/clientes");
       } catch (error) {
         alert(error.response.data.message);
       }
