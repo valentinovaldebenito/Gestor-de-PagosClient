@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 let token;
+let currentRol;
 
 function Login() {
   const navigate = useNavigate();
@@ -20,18 +21,24 @@ function Login() {
       alert("Debe completar ambos campos!");
     } else {
       try {
-        console.log(userValue, passValue);
         const response = await axios.post("http://localhost:4250/login", {
           nombre: userValue,
           password: passValue,
         });
 
         //Recibimos el JWT y lo guardamos en el localStorage
+        //console.log("User", response.data.user)
         token = response.data.token;
+        currentRol = response.data.user.rol;
+
+        console.log(response.data.user);
+
+        localStorage.setItem("currentRole", currentRol);
         localStorage.setItem("token", token);
+
         navigate("/clientes");
       } catch (error) {
-        alert(error.response.data.message);
+        console.error(error);
       }
     }
   };

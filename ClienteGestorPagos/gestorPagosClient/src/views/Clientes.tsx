@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { Card } from "primereact/card";
 import "../index.css";
@@ -10,22 +10,22 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { FloatLabel } from "primereact/floatlabel";
 import { InputText } from "primereact/inputtext";
-
-/* interface User {
-  id: number;
-  nombre: string;
-  password: string;
-  rol: string;
-} */
+import { Dropdown } from "primereact/dropdown";
 
 function Clientes() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+  const rolLogueado = Number(localStorage.getItem("currentRole"));
 
+  const roles = [
+    { nombre: "Super", value: 0 },
+    { nombre: "Admin", value: 1 },
+    { nombre: "Comun", value: 2 },
+  ];
   const [userInput, setUserInput] = useState("");
   const [passInput, setPassInput] = useState("");
   const [emailInput, setEmailInput] = useState("");
-  const [rolInput, setRolInput] = useState("");
+  const [selectedRole, setSelectedRole] = useState(null);
 
   const [users, setUsers] = useState([]);
   const [visible, setVisible] = useState(false);
@@ -51,6 +51,8 @@ function Clientes() {
   }, []);
 
   async function createUser() {
+    console.log("selectedRole: ", selectedRole)
+    console.log("rolLogueado: ", rolLogueado)
     try {
       const response = await axios.post(
         "http://localhost:4250/register-user",
@@ -58,7 +60,8 @@ function Clientes() {
           nombre: userInput,
           password: passInput,
           email: emailInput,
-          rol: rolInput,
+          rol: selectedRole,
+          currentRol: rolLogueado,
         },
         {
           headers: {
@@ -71,6 +74,10 @@ function Clientes() {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async function onSubmit() {
+    createUser();
   }
 
   return (
@@ -131,14 +138,22 @@ function Clientes() {
               </FloatLabel>
 
               <FloatLabel className="w-full">
-                <InputText className="w-full" id="rol" value={rolInput} onChange={(e) => setRolInput(e.target.value)} required />
+                <Dropdown
+                  className="w-full"
+                  id="rol"
+                  value={selectedRole}
+                  onChange={(e) => setSelectedRole(e.value)}
+                  options={roles}
+                  name="rol"
+                  optionLabel="nombre"
+                />
                 <label htmlFor="rol">Rol</label>
               </FloatLabel>
             </div>
             <div className="flex justify-content-end w-full pt-4">
               <Button
                 onClick={() => {
-                  createUser();
+                  onSubmit();
                 }}
               >
                 Crear
