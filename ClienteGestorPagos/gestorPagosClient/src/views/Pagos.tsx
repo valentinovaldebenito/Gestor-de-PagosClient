@@ -19,10 +19,10 @@ function Pagos() {
   const [pagos, setPagos] = useState([]);
   const [displayDialog, setDisplayDialog] = useState(false);
   const [fechaPago, setFechaPago] = useState(null);
-  const [metodoPago, setMetodoPago] = useState("");
-  const [descripcion, setDescripcion] = useState("");
-  const [monto, setMonto] = useState(null);
-  const [ activo, setActivo] = useState(true);
+  const [metodoPago, setMetodoPago] = useState<string>("");
+  const [descripcion, setDescripcion] = useState<string>("");
+  const [monto, setMonto] = useState<number>(0);
+  const [ activo, setActivo] = useState<boolean>(true);
   const [comprobante, setComprobante] = useState(null);
 
   const fetchPagos = async () => {
@@ -112,7 +112,7 @@ function Pagos() {
           </Card>
         </div>
       </div>
-      <Dialog className="w-4" header="Cargar Pago" visible={displayDialog} onHide={() => setDisplayDialog(false)}>
+      <Dialog className="w-4" header="Cargar Pago" draggable={false} visible={displayDialog} onHide={() => setDisplayDialog(false)}>
         <div className="flex flex-column align-items-center w-full gap-3">
           <Calendar className="w-full" value={fechaPago} onChange={(e) => setFechaPago(e.value)} placeholder="Fecha de Pago" />
           <InputText className="w-full" value={metodoPago} onChange={(e) => setMetodoPago(e.target.value)} placeholder="Método de Pago" />

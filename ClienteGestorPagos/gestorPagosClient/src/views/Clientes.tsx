@@ -11,6 +11,7 @@ import { Dialog } from "primereact/dialog";
 import { FloatLabel } from "primereact/floatlabel";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
+import { Password } from "primereact/password";
 
 function Clientes() {
   const navigate = useNavigate();
@@ -18,7 +19,6 @@ function Clientes() {
   const rolLogueado = Number(localStorage.getItem("currentRole"));
 
   const roles = [
-    { nombre: "Super", value: 0 },
     { nombre: "Admin", value: 1 },
     { nombre: "Comun", value: 2 },
   ];
@@ -72,12 +72,16 @@ function Clientes() {
       console.log(response.data);
       alert("Usuario creado con exito!");
     } catch (error) {
-      console.log(error);
+      alert(error.response.data.message)
     }
   }
 
   async function onSubmit() {
-    createUser();
+    if(userInput && emailInput && passInput && selectedRole){
+      createUser();
+    }else{
+      alert('Debe completar todos los campos!')
+    }
   }
 
   return (
@@ -116,6 +120,7 @@ function Clientes() {
             visible={visible}
             modal
             header="Crear Usuario"
+            draggable={false}
             onHide={() => {
               if (!visible) return;
               setVisible(false);
@@ -128,7 +133,7 @@ function Clientes() {
               </FloatLabel>
 
               <FloatLabel className="w-full">
-                <InputText className="w-full" id="password" value={passInput} onChange={(e) => setPassInput(e.target.value)} required />
+                <Password className="w-full" id="password" value={passInput} onChange={(e) => setPassInput(e.target.value)} required feedback={false} toggleMask />
                 <label htmlFor="password">Contraseña</label>
               </FloatLabel>
 
