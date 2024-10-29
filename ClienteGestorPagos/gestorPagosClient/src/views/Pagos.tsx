@@ -13,6 +13,11 @@ import { InputNumber } from "primereact/inputnumber";
 import { Calendar } from "primereact/calendar";
 import { FileUpload } from "primereact/fileupload";
 
+interface IComprobante {
+  base64: string,
+  mimeType: string
+}
+
 function Pagos() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -23,7 +28,7 @@ function Pagos() {
   const [descripcion, setDescripcion] = useState<string>("");
   const [monto, setMonto] = useState<number>(0);
   const [activo, setActivo] = useState<boolean>(true);
-  const [comprobante, setComprobante] = useState<string>("");
+  const [comprobante, setComprobante] = useState<IComprobante>();
 
   const fetchPagos = async () => {
     try {
@@ -46,53 +51,25 @@ function Pagos() {
   const handleFileUpload = (e) => {
     const file = e.files[0];
     const reader = new FileReader();
-
+  
     reader.onloadend = () => {
-      setComprobante(reader.result); // reader.result contiene el archivo en formato base64
+      setComprobante({
+        base64: reader?.result ? reader.result : "", // Archivo en base64
+        mimeType: file.type,   // Tipo MIME del archivo
+      });
     };
-
+  
     reader.readAsDataURL(file);
   };
-
-  /* const cargarPago = async () => {
-    const formData = new FormData();
-    formData.append("fechaPago", fechaPago);
-    formData.append("metodoPago", metodoPago);
-    formData.append("descripcion", descripcion);
-    formData.append("monto", monto);
-    formData.append("activo", activo);
-    formData.append("comprobante", comprobante);
-
-    console.log("formData: ", formData.get("fechaPago"))
-    console.log("formData: ", formData.get("metodoPago"))
-    console.log("formData: ", formData.get("descripcion"))
-    console.log("formData: ", formData.get("monto"))
-    console.log("formData: ", formData.get("comprobante"))
-  
-    if (!fechaPago || !metodoPago || !descripcion || !monto || !comprobante) {
-      alert("Debe completar todos los campos");
-      return;
-    }
-  
-    try {
-      const response = await axios.post("http://localhost:4250/pagos", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: token,
-        },
-      });
-      setPagos([...pagos, response.data]);
-      setDisplayDialog(false); // Cierra el diálogo tras cargar el pago
-    } catch (error) {
-      console.error("Error al cargar el pago:", error);
-    }
-  }; */
 
   const cargarPago = async () => {
     if (!fechaPago || !metodoPago || !descripcion || !monto || !comprobante) {
       alert("Debe completar todos los campos");
       return;
     }
+
+    console.log("Comprobante: ", comprobante)
+    console.log("MimeType: ", comprobante.mimeType)
 
     try {
       const response = await axios.post(
