@@ -22,8 +22,8 @@ function Pagos() {
   const [metodoPago, setMetodoPago] = useState<string>("");
   const [descripcion, setDescripcion] = useState<string>("");
   const [monto, setMonto] = useState<number>(0);
-  const [ activo, setActivo] = useState<boolean>(true);
-  const [comprobante, setComprobante] = useState(null);
+  const [activo, setActivo] = useState<boolean>(true);
+  const [comprobante, setComprobante] = useState<string>("");
 
   const fetchPagos = async () => {
     try {
@@ -44,10 +44,17 @@ function Pagos() {
   }, []);
 
   const handleFileUpload = (e) => {
-    setComprobante(e.files[0]);
+    const file = e.files[0];
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setComprobante(reader.result); // reader.result contiene el archivo en formato base64
+    };
+
+    reader.readAsDataURL(file);
   };
 
-  const cargarPago = async () => {
+  /* const cargarPago = async () => {
     const formData = new FormData();
     formData.append("fechaPago", fechaPago);
     formData.append("metodoPago", metodoPago);
@@ -56,32 +63,59 @@ function Pagos() {
     formData.append("activo", activo);
     formData.append("comprobante", comprobante);
 
-    console.log(comprobante)
-
-    if (!formData.values) {
+    console.log("formData: ", formData.get("fechaPago"))
+    console.log("formData: ", formData.get("metodoPago"))
+    console.log("formData: ", formData.get("descripcion"))
+    console.log("formData: ", formData.get("monto"))
+    console.log("formData: ", formData.get("comprobante"))
+  
+    if (!fechaPago || !metodoPago || !descripcion || !monto || !comprobante) {
       alert("Debe completar todos los campos");
-    } else {
-      try {
-        const response = await axios.post("http://localhost:4250/pagos",
-          {
-            fechaPago: formData.get('fechaPago'),
-            medotoPago: formData.get('metodoPago'),
-            descripcion: formData.get('descripcion'),
-            monto: formData.get('monto'),
-            activo: formData.get('activo'),
-            comprobante: formData.get('comprobante'),
-          },
+      return;
+    }
+  
+    try {
+      const response = await axios.post("http://localhost:4250/pagos", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: token,
+        },
+      });
+      setPagos([...pagos, response.data]);
+      setDisplayDialog(false); // Cierra el diálogo tras cargar el pago
+    } catch (error) {
+      console.error("Error al cargar el pago:", error);
+    }
+  }; */
+
+  const cargarPago = async () => {
+    if (!fechaPago || !metodoPago || !descripcion || !monto || !comprobante) {
+      alert("Debe completar todos los campos");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:4250/pagos",
+        {
+          fechaPago,
+          metodoPago,
+          descripcion,
+          monto,
+          activo,
+          comprobante, // ya en formato base64
+        },
         {
           headers: {
-            "Content-Type": "multipart/form-data",
             Authorization: token,
           },
-        });
-        setPagos([...pagos, response.data]);
-        setDisplayDialog(false); // Cierra el diálogo tras cargar el pago
-      } catch (error) {
-        console.error("Error al cargar el pago:", error);
-      }
+        }
+      );
+
+      setPagos([...pagos, response.data]);
+      setDisplayDialog(false); // Cierra el diálogo tras cargar el pago
+    } catch (error) {
+      console.error("Error al cargar el pago:", error);
     }
   };
 
